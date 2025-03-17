@@ -3,28 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disparador de WhatsApp</title>
+    <title>V4 Zap - Disparador de WhatsApp</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
             font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
         }
 
-        .container {
-            max-width: 800px;
-            margin-top: 30px;
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            padding: 20px;
         }
 
-        .card {
-            border: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+        .sidebar h2 {
+            font-size: 1.5rem;
+            color: #dc3545;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #212529;
+            font-weight: 500;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li a:hover, .sidebar ul li a.active {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 20px;
         }
 
         .card-header {
-            background: linear-gradient(135deg, #212529, #343a40);
+            background: linear-gradient(135deg, #dc3545, #ff5757);
             color: #fff;
             font-size: 1.2rem;
             font-weight: bold;
@@ -63,12 +98,6 @@
             border-radius: 5px;
         }
 
-        #qrCodeContainer img {
-            max-width: 100%;
-            height: auto;
-            margin: 10px 0;
-        }
-
         .status-message {
             font-size: 1rem;
             font-weight: bold;
@@ -81,69 +110,88 @@
         }
 
         @media (max-width: 768px) {
-            .btn-custom {
-                font-size: 0.9rem;
-                padding: 8px 12px;
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .content {
+                margin-left: 0;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="card-header">
-                <i class="fas fa-comments"></i> Disparador de WhatsApp
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <button id="generateQrCode" class="btn btn-custom btn-connect">
-                        <i class="fas fa-qrcode"></i> Conectar WhatsApp
-                    </button>
-                    <button id="disconnectDevice" class="btn btn-custom btn-disconnect">
-                        <i class="fas fa-power-off"></i> Desconectar
-                    </button>
+    <div class="sidebar">
+        <h2>WhizzApp</h2>
+        <ul>
+            <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="#"><i class="fas fa-comments"></i> Mensagens</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Contatos</a></li>
+            <li><a href="#"><i class="fas fa-bullhorn"></i> Campanhas</a></li>
+            <li><a href="#"><i class="fas fa-chart-line"></i> Relatórios</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-comments"></i> Disparador de WhatsApp
                 </div>
-
-                <div id="qrCodeContainer" class="text-center mt-3"></div>
-                <div id="status" class="status-message text-secondary">Aguardando conexão...</div>
-
-                <form id="messageForm">
-                    <div class="mb-3">
-                        <label for="numero" class="form-label">Número do WhatsApp</label>
-                        <input type="text" class="form-control" id="numero" placeholder="Exemplo: 5511999999999" required>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <button id="generateQrCode" class="btn btn-custom btn-connect">
+                            <i class="fas fa-qrcode"></i> Conectar WhatsApp
+                        </button>
+                        <button id="disconnectDevice" class="btn btn-custom btn-disconnect">
+                            <i class="fas fa-power-off"></i> Desconectar
+                        </button>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="mensagem" class="form-label">Mensagem</label>
-                        <textarea class="form-control" id="mensagem" rows="3" required></textarea>
-                    </div>
+                    <div id="qrCodeContainer" class="text-center mt-3"></div>
+                    <div id="status" class="status-message text-secondary">Aguardando conexão...</div>
 
-                    <div class="mb-3">
-                        <label for="scheduleTime" class="form-label">Data e Hora do Envio</label>
-                        <input type="datetime-local" class="form-control" id="scheduleTime" required>
-                    </div>
+                    <form id="messageForm">
+                        <div class="mb-3">
+                            <label for="numero" class="form-label">Número do WhatsApp</label>
+                            <input type="text" class="form-control" id="numero" placeholder="Exemplo: 5511999999999" required>
+                        </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-paper-plane"></i> Agendar Mensagem
-                    </button>
-                </form>
+                        <div class="mb-3">
+                            <label for="mensagem" class="form-label">Mensagem</label>
+                            <textarea class="form-control" id="mensagem" rows="3" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="scheduleTime" class="form-label">Data e Hora do Envio</label>
+                            <input type="datetime-local" class="form-control" id="scheduleTime" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane"></i> Agendar Mensagem
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <h5 class="mt-4 text-center"><i class="fas fa-clock"></i> Mensagens Agendadas</h5>
-        <div class="table-container">
-            <table class="table table-striped mt-2">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Data</th>
-                        <th>Hora</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="scheduledMessages"></tbody>
-            </table>
+            <h5 class="mt-4 text-center"><i class="fas fa-clock"></i> Mensagens Agendadas</h5>
+            <div class="table-container">
+                <table class="table table-striped mt-2">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduledMessages"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -178,39 +226,6 @@
             const result = await response.json();
             alert(result.success ? "Mensagem agendada!" : "Erro ao agendar mensagem.");
         });
-
-        function atualizarLista(mensagens) {
-            const tabela = document.getElementById("scheduledMessages");
-            tabela.innerHTML = "";
-            mensagens.forEach((msg) => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${msg.id}</td>
-                    <td>${msg.data}</td>
-                    <td>${msg.hora}</td>
-                    <td><strong>${msg.status}</strong></td>
-                `;
-                tabela.appendChild(tr);
-            });
-        }
-
-        async function carregarMensagens() {
-            const response = await fetch("/scheduled-messages");
-            const mensagens = await response.json();
-            atualizarLista(mensagens);
-        }
-
-        socket.on("qrCode", (url) => {
-            document.getElementById("qrCodeContainer").innerHTML = `<img src="${url}" alt="QR Code">`;
-            document.getElementById("status").innerText = "Escaneie o QR Code para conectar.";
-        });
-
-        socket.on("ready", (message) => {
-            document.getElementById("status").innerText = message;
-            document.getElementById("qrCodeContainer").innerHTML = "";
-        });
-
-        carregarMensagens();
     </script>
 </body>
 </html>
